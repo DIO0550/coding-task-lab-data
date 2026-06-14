@@ -1,0 +1,946 @@
+{
+  "rules": "spec-phase1: kuitan=on, kiriage=off, pinfu-tsumo=20fu, double-yakuman=on(複合役満は要補正)",
+  "curated": [
+    {
+      "id": "A01",
+      "note": "リーチのみ 1翻40符",
+      "valid": true,
+      "han": 1,
+      "fu": 40,
+      "yaku": [
+        "Riichi"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 2,
+          "reason": "pair_wait"
+        }
+      ],
+      "cost": {
+        "main": 1300,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1300,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "A04",
+      "note": "平和ツモ(タンヤオ複合) 20符",
+      "valid": true,
+      "han": 3,
+      "fu": 20,
+      "yaku": [
+        "Menzen Tsumo",
+        "Pinfu",
+        "Tanyao"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 1300,
+        "additional": 700,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 2700,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "A05",
+      "note": "平和ロン 30符",
+      "valid": true,
+      "han": 2,
+      "fu": 30,
+      "yaku": [
+        "Pinfu",
+        "Tanyao"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 2000,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 2000,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "A06",
+      "note": "一盃口",
+      "valid": true,
+      "han": 1,
+      "fu": 40,
+      "yaku": [
+        "Iipeiko"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 2,
+          "reason": "valued_pair"
+        },
+        {
+          "fu": 2,
+          "reason": "pair_wait"
+        }
+      ],
+      "cost": {
+        "main": 1300,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1300,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "A08",
+      "note": "一気通貫+平和",
+      "valid": true,
+      "han": 3,
+      "fu": 30,
+      "yaku": [
+        "Pinfu",
+        "Ittsu"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 3900,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 3900,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "D01",
+      "note": "七対子 25符2翻",
+      "valid": true,
+      "han": 2,
+      "fu": 25,
+      "yaku": [
+        "Chiitoitsu"
+      ],
+      "fu_details": [
+        {
+          "fu": 25,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 1600,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1600,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "D02",
+      "note": "七対子ツモ",
+      "valid": true,
+      "han": 3,
+      "fu": 25,
+      "yaku": [
+        "Menzen Tsumo",
+        "Chiitoitsu"
+      ],
+      "fu_details": [
+        {
+          "fu": 25,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 1600,
+        "additional": 800,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 3200,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "H03",
+      "note": "四暗刻単騎(ダブル役満)",
+      "valid": true,
+      "han": 26,
+      "fu": 50,
+      "yaku": [
+        "Suu Ankou Tanki"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "valued_pair"
+        },
+        {
+          "fu": 2,
+          "reason": "pair_wait"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 32000,
+        "additional": 16000,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 64000,
+        "yaku_level": "2x yakuman"
+      }
+    },
+    {
+      "id": "H06",
+      "note": "字一色系複合(spec補正要)",
+      "valid": true,
+      "han": 65,
+      "fu": 70,
+      "yaku": [
+        "Tsuu Iisou",
+        "Dai Suushii",
+        "Suu Ankou Tanki"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "valued_pair"
+        },
+        {
+          "fu": 2,
+          "reason": "pair_wait"
+        }
+      ],
+      "cost": {
+        "main": 160000,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 160000,
+        "yaku_level": "5x yakuman"
+      }
+    },
+    {
+      "id": "I01",
+      "note": "リーチ平和三色ツモ 満貫",
+      "valid": true,
+      "han": 5,
+      "fu": 20,
+      "yaku": [
+        "Menzen Tsumo",
+        "Riichi",
+        "Pinfu",
+        "Sanshoku Doujun"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 4000,
+        "additional": 2000,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 8000,
+        "yaku_level": "mangan"
+      }
+    },
+    {
+      "id": "J04",
+      "note": "海底摸月+平和+タンヤオ",
+      "valid": true,
+      "han": 4,
+      "fu": 20,
+      "yaku": [
+        "Menzen Tsumo",
+        "Haitei Raoyue",
+        "Pinfu",
+        "Tanyao"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 2600,
+        "additional": 1300,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 5200,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "J08",
+      "note": "ダブルリーチ+平和+タンヤオ",
+      "valid": true,
+      "han": 4,
+      "fu": 30,
+      "yaku": [
+        "Double Riichi",
+        "Pinfu",
+        "Tanyao"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 7700,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 7700,
+        "yaku_level": ""
+      }
+    },
+    {
+      "id": "K03",
+      "note": "役なし(no_yaku想定)",
+      "valid": false,
+      "error": "no_yaku"
+    }
+  ],
+  "random": [
+    {
+      "id": "R001",
+      "note": "random(tsumo=True)",
+      "valid": true,
+      "han": 1,
+      "fu": 30,
+      "yaku": [
+        "Menzen Tsumo"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 500,
+        "additional": 300,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1100,
+        "yaku_level": ""
+      },
+      "input_readable": "22555678m123p567s"
+    },
+    {
+      "id": "R002",
+      "note": "random(tsumo=True)",
+      "valid": true,
+      "han": 1,
+      "fu": 40,
+      "yaku": [
+        "Menzen Tsumo"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 700,
+        "additional": 400,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1500,
+        "yaku_level": ""
+      },
+      "input_readable": "678m777789p55s222z"
+    },
+    {
+      "id": "R003",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 2,
+      "fu": 50,
+      "yaku": [
+        "San Ankou"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        }
+      ],
+      "cost": {
+        "main": 3200,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 3200,
+        "yaku_level": ""
+      },
+      "input_readable": "444m234p44466s333z"
+    },
+    {
+      "id": "R004",
+      "note": "random(tsumo=True)",
+      "valid": true,
+      "han": 2,
+      "fu": 30,
+      "yaku": [
+        "Menzen Tsumo",
+        "Tanyao"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 1000,
+        "additional": 500,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 2000,
+        "yaku_level": ""
+      },
+      "input_readable": "23333444m666678p"
+    },
+    {
+      "id": "R005",
+      "note": "random(tsumo=True)",
+      "valid": true,
+      "han": 2,
+      "fu": 40,
+      "yaku": [
+        "Menzen Tsumo",
+        "Yakuhai (hatsu)"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 1300,
+        "additional": 700,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 2700,
+        "yaku_level": ""
+      },
+      "input_readable": "234m23499p444s666z"
+    },
+    {
+      "id": "R006",
+      "note": "random(tsumo=True)",
+      "valid": true,
+      "han": 1,
+      "fu": 30,
+      "yaku": [
+        "Menzen Tsumo"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 2,
+          "reason": "kanchan"
+        },
+        {
+          "fu": 2,
+          "reason": "valued_pair"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 500,
+        "additional": 300,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1100,
+        "yaku_level": ""
+      },
+      "input_readable": "567789m234456s55z"
+    },
+    {
+      "id": "R007",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 4,
+      "fu": 60,
+      "yaku": [
+        "Toitoi",
+        "San Ankou"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "valued_pair"
+        },
+        {
+          "fu": 2,
+          "reason": "open_pon"
+        }
+      ],
+      "cost": {
+        "main": 8000,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 8000,
+        "yaku_level": "mangan"
+      },
+      "input_readable": "666m666999p999s11z"
+    },
+    {
+      "id": "R008",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 1,
+      "fu": 50,
+      "yaku": [
+        "Yakuhai (round wind east)"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "pair_wait"
+        }
+      ],
+      "cost": {
+        "main": 1600,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1600,
+        "yaku_level": ""
+      },
+      "input_readable": "34599m456p888s111z"
+    },
+    {
+      "id": "R009",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 1,
+      "fu": 30,
+      "yaku": [
+        "Pinfu"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 1000,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1000,
+        "yaku_level": ""
+      },
+      "input_readable": "789m23488p122334s"
+    },
+    {
+      "id": "R010",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 1,
+      "fu": 40,
+      "yaku": [
+        "Yakuhai (chun)"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        }
+      ],
+      "cost": {
+        "main": 1300,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1300,
+        "yaku_level": ""
+      },
+      "input_readable": "11567789m234p777z"
+    },
+    {
+      "id": "R011",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 3,
+      "fu": 50,
+      "yaku": [
+        "Yakuhai (seat wind south)",
+        "Chantai"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "valued_pair"
+        },
+        {
+          "fu": 2,
+          "reason": "pair_wait"
+        }
+      ],
+      "cost": {
+        "main": 6400,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 6400,
+        "yaku_level": ""
+      },
+      "input_readable": "111123m123s22255z"
+    },
+    {
+      "id": "R012",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 1,
+      "fu": 50,
+      "yaku": [
+        "Yakuhai (round wind east)"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "open_terminal_pon"
+        }
+      ],
+      "cost": {
+        "main": 1600,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1600,
+        "yaku_level": ""
+      },
+      "input_readable": "33367778m111p111z"
+    },
+    {
+      "id": "R013",
+      "note": "random(tsumo=True)",
+      "valid": true,
+      "han": 1,
+      "fu": 30,
+      "yaku": [
+        "Menzen Tsumo"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 500,
+        "additional": 300,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1100,
+        "yaku_level": ""
+      },
+      "input_readable": "111678m789p33456s"
+    },
+    {
+      "id": "R014",
+      "note": "random(tsumo=False)",
+      "valid": true,
+      "han": 1,
+      "fu": 30,
+      "yaku": [
+        "Pinfu"
+      ],
+      "fu_details": [
+        {
+          "fu": 30,
+          "reason": "base"
+        }
+      ],
+      "cost": {
+        "main": 1000,
+        "additional": 0,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 1000,
+        "yaku_level": ""
+      },
+      "input_readable": "12355m234567p234s"
+    },
+    {
+      "id": "R015",
+      "note": "random(tsumo=True)",
+      "valid": true,
+      "han": 13,
+      "fu": 50,
+      "yaku": [
+        "Suu Ankou"
+      ],
+      "fu_details": [
+        {
+          "fu": 20,
+          "reason": "base"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 8,
+          "reason": "closed_terminal_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 4,
+          "reason": "closed_pon"
+        },
+        {
+          "fu": 2,
+          "reason": "tsumo"
+        }
+      ],
+      "cost": {
+        "main": 16000,
+        "additional": 8000,
+        "main_bonus": 0,
+        "additional_bonus": 0,
+        "kyoutaku_bonus": 0,
+        "total": 32000,
+        "yaku_level": "yakuman"
+      },
+      "input_readable": "33344477p999s555z"
+    }
+  ]
+}
