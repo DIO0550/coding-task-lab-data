@@ -9,7 +9,7 @@
 | Phase | 変更内容 | 測定する設計力 | ファイル |
 |---|---|---|---|
 | 2 | 三人麻雀モード追加 | 既存ドメインの拡張性 | [phase2-sanma.md](./phase2-sanma.md) |
-| 3 | 架空のローカル役追加 | 汚染耐性 + 役判定の拡張性(OCP) | [phase3-local-yaku.md](./phase3-local-yaku.md) |
+| 3 | 架空のローカル役追加(嶺上花・三色一盃口・三色一気通貫) | 汚染耐性 + 役判定の拡張性(OCP) | [phase3-local-yaku.md](./phase3-local-yaku.md) |
 | 4 | 点数計算エンジンの完全分離 | 層分離が本物か | [phase4-extraction.md](./phase4-extraction.md) |
 
 ## 共通の観測指標(被験者には伝えない)
