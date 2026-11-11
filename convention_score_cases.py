@@ -69,6 +69,17 @@ CASES = [
         {"layer-direction": 1},
     ),
     (
+        "cli は libs・services・domains を読める。feature を読むのと、cli が読まれるのは向きの違反",
+        {
+            "src/cli/calc.ts": 'import { read } from "../libs/stdin";\nimport { total } from "../services/total";\nimport { Money } from "../domains/money";\nimport { view } from "../features/score";\nexport const main = [read, total, Money, view];\n',
+            "src/libs/stdin/index.ts": "export const read = 1;\n",
+            "src/services/total/index.ts": 'import { main } from "../../cli/calc";\nexport const total = 1;\nexport const again = main;\n',
+            "src/domains/money/index.ts": MONEY,
+            "src/features/score/index.ts": "export const view = 1;\n",
+        },
+        {"layer-direction": 2, "import-cycle": 1},
+    ),
+    (
         "コメントの中の import は数えない",
         {
             "src/domains/money/index.ts": '// import { total } from "@/src/services/total";\n' + MONEY,

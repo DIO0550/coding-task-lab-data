@@ -47,18 +47,22 @@ ALIAS = "@/"
 MAX_EXAMPLES = 5
 
 # 層の名前。`src/` の直下、またはプロジェクト直下（Next.js の `app/`）の最初のフォルダ名で決める。
-LAYERS = ("app", "features", "domains", "services", "components", "hooks", "libs", "utils", "types")
+LAYERS = ("app", "cli", "features", "domains", "services", "components", "hooks", "libs", "utils", "types")
 
 # 層ごとの、import してはならない層（`rules/architecture.md`「依存方向のルール」）。
+# 入口の層（`app` / `cli`）は、どの層からも import できない。
+ENTRY_LAYERS = {"app", "cli"}
 FORBIDDEN_LAYERS = {
-    "domains": {"services", "features", "app", "libs"},
-    "services": {"features", "app", "components", "hooks", "libs"},
-    "features": {"app"},
-    "components": {"domains", "services", "features", "app"},
-    "hooks": {"domains", "services", "features", "app"},
-    "utils": {"domains", "services", "features", "app"},
-    "types": {"domains", "services", "features", "app"},
-    "libs": {"services", "features", "app", "components", "hooks"},
+    "cli": {"app", "features", "components", "hooks"},
+    "app": {"cli"},
+    "domains": {"services", "features", "libs"} | ENTRY_LAYERS,
+    "services": {"features", "components", "hooks", "libs"} | ENTRY_LAYERS,
+    "features": ENTRY_LAYERS,
+    "components": {"domains", "services", "features"} | ENTRY_LAYERS,
+    "hooks": {"domains", "services", "features"} | ENTRY_LAYERS,
+    "utils": {"domains", "services", "features"} | ENTRY_LAYERS,
+    "types": {"domains", "services", "features"} | ENTRY_LAYERS,
+    "libs": {"services", "features", "components", "hooks"} | ENTRY_LAYERS,
 }
 
 # React / Next.js に依存してはならない層。
@@ -217,7 +221,7 @@ def layer_of(path: str) -> str | None:
     """そのファイルが属する層を求める。
 
     @param path プロジェクトのフォルダから見たパス
-    @returns 層の名前。`src/cli/` のように規約が層として挙げていない場所なら `None`
+    @returns 層の名前。規約が層として挙げていない場所なら `None`
     """
     parts = path.split("/")
     rest = parts[1:] if parts[0] == "src" else parts
