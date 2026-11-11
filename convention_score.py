@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """被験エージェントが書いたコードの、実装規約からの外れを数える。
 
-coding-task-lab の `rules/` のうち、**ソースを読むだけで判定できるもの**を種別ごとに数える。
+coding-task-lab の `rules/`（版 0.5.0 の規約）のうち、**ソースを読むだけで判定できるもの**を
+種別ごとに数える。それより前の版の成果物を読ませると、当時は無かった規約でも数える。
 機能の正しさ（`expected_data_sample.json` との突き合わせ）と、lint / typecheck / test / build の
 成否はここでは見ない。
 
@@ -14,6 +15,9 @@ coding-task-lab の `rules/` のうち、**ソースを読むだけで判定で�
 正規表現で数える種別（`LINE_PATTERNS` と `suppression`）の 1 件は 1 行で、同じ行に 2 つあっても
 1 件と数える。型は解かないので、`domain-mutating-call` は引数ではなく手元で作った配列への
 `push` も数える（参考値に置いている理由）。
+
+名前を見る種別（`constant-case` / `and-name` / `generic-name` / `of-method`）が見るのは宣言の行だけで、
+使っている側の行は数えない。
 
 **重み付けした 1 つの点数は出さない。** 種別ごとの重さは測定の狙いによって変わるので、
 件数と 1000 行あたりの密度までを出し、比べ方は読む側が決める。
@@ -47,14 +51,14 @@ LAYERS = ("app", "features", "domains", "services", "components", "hooks", "libs
 
 # 層ごとの、import してはならない層（`rules/architecture.md`「依存方向のルール」）。
 FORBIDDEN_LAYERS = {
-    "domains": {"services", "features", "app"},
+    "domains": {"services", "features", "app", "libs"},
     "services": {"features", "app", "components", "hooks", "libs"},
     "features": {"app"},
     "components": {"domains", "services", "features", "app"},
     "hooks": {"domains", "services", "features", "app"},
     "utils": {"domains", "services", "features", "app"},
     "types": {"domains", "services", "features", "app"},
-    "libs": {"domains", "services", "features", "app", "components", "hooks", "utils"},
+    "libs": {"services", "features", "app", "components", "hooks"},
 }
 
 # React / Next.js に依存してはならない層。
@@ -74,8 +78,18 @@ VIOLATION_KINDS = (
     "import-cycle",
     "domain-type-only-file",
     "module-extra-implementation",
+    "utils-form",
+    "folder-name",
+    "long-tsx",
     "any",
     "class",
+    "exception",
+    "param-count",
+    "react-node-return",
+    "constant-case",
+    "and-name",
+    "generic-name",
+    "of-method",
     "domain-io",
     "runtime-dependency",
     "suppression",
@@ -89,6 +103,10 @@ VIOLATION_KINDS = (
 INDICATOR_KINDS = (
     "domain-mutating-call",
     "domain-let",
+    "nullable-return",
+    "switch-default",
+    "type-assertion",
+    "undocumented-export",
     "test-conditional",
     "test-before-each",
     "test-interaction-assert",
@@ -100,6 +118,26 @@ INDICATOR_KINDS = (
 LINE_PATTERNS = {
     "any": ("is_source", re.compile(r"(?::\s*any\b|\bas\s+any\b|<\s*any\b|\bany\s*\[\]|,\s*any\s*>)")),
     "class": ("is_source", re.compile(r"^\s*(?:export\s+)?(?:default\s+)?(?:abstract\s+)?class\s+\w")),
+    "exception": ("is_source_outside_libs", re.compile(r"\bthrow\b|\btry\s*\{")),
+    "react-node-return": ("is_source", re.compile(r"\)\s*:\s*(?:React\.)?ReactNode\b")),
+    "constant-case": ("is_source", re.compile(r"\bconst\s+[A-Z][A-Z0-9_]+\b(?=\s*[:=])")),
+    "and-name": (
+        "is_source",
+        re.compile(
+            r"\b(?:function|const|let|type|interface)\s+\w*[a-z0-9]And[A-Z]\w*"
+            r"|^\s*(?:async\s+)?\w*[a-z0-9]And[A-Z]\w*\s*(?:<[^>]*>)?(?:\([^)]*\)\s*(?::[^{]+)?\{\s*$|\s*:\s*(?:async\s*)?\()"
+        ),
+    ),
+    "generic-name": (
+        "is_source",
+        re.compile(
+            r"\b(?:function|const|type|interface)\s+\w*(?:Entry|Entries|Info|Data|Details?|Manager|Helpers?)\b"
+        ),
+    ),
+    "of-method": (
+        "is_source",
+        re.compile(r"^\s*of(?:[A-Z]\w*)?\s*(?:<[^>]*>)?\s*[(:]|\b(?:function|const)\s+of[A-Z]\w*"),
+    ),
     "domain-io": (
         "is_pure_layer",
         re.compile(r"\b(?:console\.\w+|localStorage\b|sessionStorage\b|fetch\s*\(|process\.(?:stdin|stdout|env))"),
@@ -112,6 +150,9 @@ LINE_PATTERNS = {
         re.compile(r"\.(?:push|pop|shift|unshift|splice|sort|reverse|fill)\s*\("),
     ),
     "domain-let": ("is_domain_source", re.compile(r"\blet\s+[\w{\[]")),
+    "nullable-return": ("is_source", re.compile(r"\)\s*:\s*[^=;{}()]*\|\s*(?:undefined|null)\b")),
+    "switch-default": ("is_source", re.compile(r"^\s*default\s*:")),
+    "type-assertion": ("is_source", re.compile(r"\bas\s+(?!const\b)[\w{\[(]")),
     "test-conditional": ("is_test", re.compile(r"\b(?:if|switch)\s*\(")),
     "test-before-each": ("is_test", re.compile(r"\b(?:beforeEach|beforeAll)\s*\(")),
     "test-interaction-assert": ("is_test", re.compile(r"\.toHaveBeenCalled\w*\s*\(")),
@@ -119,10 +160,39 @@ LINE_PATTERNS = {
     "global-listener": ("is_source", re.compile(r"\b(?:document|window)\.addEventListener\s*\(")),
 }
 
+# その行を数えない条件。import / export の `as` は別名で、型の言い換えではない。
+LINE_EXCLUSIONS = {
+    "type-assertion": re.compile(r"^\s*(?:import\b|export\s*(?:type\s*)?[{*])|^\s*\w+\s+as\s+\w+\s*,?\s*$|\*\s+as\s+"),
+}
+
+# そのファイルでは数えない条件。Context のアクセサフックが Provider の外で投げるのは規約が認めている。
+FILE_EXCLUSIONS = {
+    "exception": re.compile(r"\buseContext\s*\("),
+}
+
 # コメントに書かれる検査の抑制と、フックの抜け道。コメントを落とす前の行で数える。
 SUPPRESSION = re.compile(
-    r"(?:eslint-disable|biome-ignore|@ts-ignore|@ts-expect-error|@ts-nocheck|@lint-suppress-ok|@test-rules-disable)"
+    r"(?:eslint-disable|biome-ignore|@ts-ignore|@ts-nocheck|@lint-suppress-ok|@test-rules-disable)"
 )
+# テストでは、型が弾くことを固定する手段なので抑制に数えない。
+TYPE_ERROR_EXPECTATION = re.compile(r"@ts-expect-error")
+
+KEBAB_CASE = re.compile(r"^[a-z0-9]+(?:-[a-z0-9]+)*$")
+PASCAL_CASE_FILE = re.compile(r"^[A-Z][A-Za-z0-9]*\.tsx?$")
+GENERIC_FILE_NAME = re.compile(
+    r"(?:^|[-_])(?:helpers?|info|data|details?|manager|entry|entries)$|(?:Helpers?|Info|Data|Details?|Manager|Entry|Entries)$"
+)
+# テストの共有物を置くフォルダ。モジュールフォルダとしての名前の規則は掛けない。
+TEST_FOLDERS = {"__tests__", "__fixtures__", "__mocks__"}
+UNWRAP_OWNERS = {"Result.ts", "Option.ts"}
+MAX_TSX_LINES = 600
+MAX_PARAMETERS = 3
+EXPORTED_DECLARATION = re.compile(r"^export\s+(?:const|function|async\s+function|type|interface)\s+\w+")
+CONTROL_KEYWORDS = {"if", "for", "while", "switch", "catch", "return", "function", "await", "typeof", "new"}
+FUNCTION_HEAD = re.compile(r"\bfunction\b\s*\*?\s*\w*\s*(?:<[^()]*>)?\s*$")
+METHOD_HEAD = re.compile(r"(?:^|[\n;{},])\s*(?:(?:async|get|set)\s+)*(\w+)\s*(?:<[^()]*>)?\s*$")
+ARROW_TAIL = re.compile(r"\s*(?::[^=;{}]*?)?\s*=>")
+BODY_TAIL = re.compile(r"\s*(?::[^;=]*?)?\s*\{")
 
 TYPE_DECLARATION = re.compile(r"^\s*export\s+(?:type\s+\w+\s*[=<]|interface\s+\w)", re.M)
 VALUE_DECLARATION = re.compile(r"^\s*export\s+(?:const|function|async\s+function|default)\b", re.M)
@@ -189,8 +259,20 @@ def is_pure_layer_test(path: str) -> bool:
     return in_pure_layer(path) and is_test(path)
 
 
+def is_source_outside_libs(path: str) -> bool:
+    """@returns 例外を投げてはならない実装ファイルなら真。
+
+    例外へ変換してよい境界（`libs/`）・テストの共有物・テスト用の `unwrap` を持つ雛形
+    （`Result` / `Option`）は除く
+    """
+    is_unwrap_owner = layer_of(path) == "utils" and os.path.basename(path) in UNWRAP_OWNERS
+    is_test_support = bool(TEST_FOLDERS & set(path.split("/")))
+    return is_source(path) and layer_of(path) != "libs" and not (is_unwrap_owner or is_test_support)
+
+
 FILE_FILTERS = {
-    f.__name__: f for f in (is_test, is_source, is_domain_source, is_pure_layer, is_pure_layer_test)
+    f.__name__: f
+    for f in (is_test, is_source, is_domain_source, is_pure_layer, is_pure_layer_test, is_source_outside_libs)
 }
 
 
@@ -342,7 +424,8 @@ def scan_imports(sources: dict[str, str]) -> dict[str, list[str]]:
     for importer in sorted(files):
         layer = layer_of(importer)
         code_without_comments = re.sub(r"//[^\n]*|/\*.*?\*/", "", sources[importer], flags=re.S)
-        for specifier in IMPORT_SPECIFIER.findall(code_without_comments):
+        # 同じ先を型と値で 2 回 import していても、依存は 1 本と数える。
+        for specifier in sorted(set(IMPORT_SPECIFIER.findall(code_without_comments))):
             if layer in FRAMEWORK_FREE_LAYERS and FRAMEWORK_PACKAGE.match(specifier):
                 found["framework-dependency"].append(f"{importer} → {specifier}")
             target = resolve_import(specifier, importer, files)
@@ -370,15 +453,100 @@ def scan_lines(sources: dict[str, str]) -> dict[str, list[str]]:
         raw_lines = sources[path].split("\n")
         code_lines = strip_comments_and_strings(sources[path]).split("\n")
         found["suppression"] += [
-            f"{path}:{number}" for number, line in enumerate(raw_lines, 1) if SUPPRESSION.search(line)
+            f"{path}:{number}"
+            for number, line in enumerate(raw_lines, 1)
+            if SUPPRESSION.search(line) or (is_source(path) and TYPE_ERROR_EXPECTATION.search(line))
         ]
         for kind, (filter_name, pattern) in LINE_PATTERNS.items():
-            if not FILE_FILTERS[filter_name](path):
+            excluded_file = kind in FILE_EXCLUSIONS and FILE_EXCLUSIONS[kind].search(sources[path])
+            if excluded_file or not FILE_FILTERS[filter_name](path):
                 continue
+            excluded_line = LINE_EXCLUSIONS.get(kind)
             found[kind] += [
-                f"{path}:{number}" for number, line in enumerate(code_lines, 1) if pattern.search(line)
+                f"{path}:{number}"
+                for number, line in enumerate(code_lines, 1)
+                if pattern.search(line) and not (excluded_line and excluded_line.search(line))
             ]
     return found
+
+
+def paired_parentheses(code: str) -> list[tuple[int, int]]:
+    """丸括弧の開きと閉じの位置を対にする。
+
+    @param code コメントと文字列を落としたソース
+    @returns （開きの位置, 閉じの位置）の並び。対にならない括弧は含めない
+    """
+    pairs = []
+    opened: list[int] = []
+    for position, character in enumerate(code):
+        if character == "(":
+            opened.append(position)
+        elif character == ")" and opened:
+            pairs.append((opened.pop(), position))
+    return pairs
+
+
+def count_parameters(parameters: str) -> int:
+    """引数の並びに書かれた引数の数を数える。
+
+    @param parameters 丸括弧の中身
+    @returns いちばん外側のカンマで区切った、空でない項の数。分割代入は 1 つと数える
+    """
+    depth = 0
+    count = 0
+    has_content = False
+    for position, character in enumerate(parameters):
+        closes_generic = character == ">" and parameters[position - 1 : position] != "="
+        if character in "([{<":
+            depth += 1
+        elif character in ")]}" or closes_generic:
+            depth -= 1
+        if character == "," and depth == 0:
+            count += has_content
+            has_content = False
+        elif not character.isspace():
+            has_content = True
+    return count + has_content
+
+
+def scan_signatures(sources: dict[str, str]) -> dict[str, list[str]]:
+    """関数の宣言から読める違反を集める。
+
+    丸括弧の対のうち、`function` に続くもの・`=>` が後ろに続くもの・メソッドの本体が後ろに続く
+    ものを引数の並びとみなす。関数の型（`(a, b) => void`）の引数も数える。
+
+    @param sources パスから、コメントを落としていないソース全文への対応
+    @returns `param-count` の `<パス>:<行番号>`
+    """
+    found: list[str] = []
+    for path in sorted(p for p in sources if is_source(p)):
+        code = strip_comments_and_strings(sources[path])
+        for opened, closed in sorted(paired_parentheses(code)):
+            head = code[max(0, opened - 120) : opened]
+            tail = code[closed + 1 : closed + 200]
+            method = METHOD_HEAD.search(head)
+            is_method = bool(method) and method.group(1) not in CONTROL_KEYWORDS and bool(BODY_TAIL.match(tail))
+            is_signature = bool(FUNCTION_HEAD.search(head)) or bool(ARROW_TAIL.match(tail)) or is_method
+            if is_signature and count_parameters(code[opened + 1 : closed]) > MAX_PARAMETERS:
+                found.append(f"{path}:{code.count(chr(10), 0, opened) + 1}")
+    return {"param-count": found}
+
+
+def scan_documentation(sources: dict[str, str]) -> dict[str, list[str]]:
+    """doc コメントの無い公開の宣言を集める。
+
+    @param sources パスから、コメントを落としていないソース全文への対応
+    @returns `undocumented-export` の `<パス>:<行番号>`。直前の空でない行が `*/` で終わって
+        いない `export` の宣言を数える
+    """
+    found: list[str] = []
+    for path in sorted(p for p in sources if is_source(p)):
+        previous = ""
+        for number, line in enumerate(sources[path].split("\n"), 1):
+            if EXPORTED_DECLARATION.match(line) and not previous.rstrip().endswith("*/"):
+                found.append(f"{path}:{number}")
+            previous = line if line.strip() else previous
+    return {"undocumented-export": found}
 
 
 def scan_layout(sources: dict[str, str]) -> dict[str, list[str]]:
@@ -388,18 +556,30 @@ def scan_layout(sources: dict[str, str]) -> dict[str, list[str]]:
     `components/` のように、規約がモジュールフォルダかどうかを明示していない場所は数えない。
 
     @param sources パスから、コメントを落としていないソース全文への対応
-    @returns `domain-type-only-file` / `module-extra-implementation` / `test-file-name` /
-        `test-location` ごとの説明
+    @returns `domain-type-only-file` / `module-extra-implementation` / `utils-form` /
+        `folder-name` / `long-tsx` / `generic-name` / `test-file-name` / `test-location` ごとの説明
     """
     found: dict[str, list[str]] = {
         "domain-type-only-file": [],
         "module-extra-implementation": [],
+        "utils-form": [],
+        "folder-name": [],
+        "long-tsx": [],
+        "generic-name": [],
         "test-file-name": [],
         "test-location": [],
     }
     implementations: dict[str, list[str]] = {}
+    misnamed_folders: set[str] = set()
     for path in sorted(sources):
         folder, name = os.path.split(path)
+        misnamed_folders |= misnamed_module_folders(path)
+        if is_source(path):
+            found["utils-form"] += [path] if breaks_utils_form(path) else []
+            found["generic-name"] += [path] if GENERIC_FILE_NAME.search(name.split(".")[0]) else []
+            code_lines = [line for line in strip_comments_and_strings(sources[path]).split("\n") if line.strip()]
+            is_long_tsx = name.endswith(".tsx") and len(code_lines) > MAX_TSX_LINES
+            found["long-tsx"] += [f"{path}: {len(code_lines)} 行"] if is_long_tsx else []
         if is_test(path):
             if not TEST_FILE_NAME.match(name):
                 found["test-file-name"].append(path)
@@ -417,7 +597,40 @@ def scan_layout(sources: dict[str, str]) -> dict[str, list[str]]:
     found["module-extra-implementation"] = [
         f"{folder}: {', '.join(names)}" for folder, names in implementations.items() if len(names) > 1
     ]
+    found["folder-name"] = sorted(misnamed_folders)
     return found
+
+
+def breaks_utils_form(path: str) -> bool:
+    """`src/utils/` の「フラットな 1 ファイル + PascalCase」から外れているかを判定する。
+
+    @param path 実装ファイルのパス
+    @returns `utils` 層のファイルで、フォルダの中に置かれているか、名前が PascalCase でなければ真
+    """
+    if layer_of(path) != "utils":
+        return False
+    below_layer = path.split("/utils/", 1)[1].split("/")
+    in_shared_test_folder = len(below_layer) == 2 and below_layer[0] in TEST_FOLDERS
+    is_flat = len(below_layer) == 1 or in_shared_test_folder
+    return not is_flat or not (in_shared_test_folder or PASCAL_CASE_FILE.match(below_layer[-1]))
+
+
+def misnamed_module_folders(path: str) -> set[str]:
+    """ケバブケースでないモジュールフォルダを集める。
+
+    @param path ファイルのパス
+    @returns そのファイルを含むフォルダのうち、`domains` / `services` / `features` の層の下に
+        あってケバブケースでないもの。テストの共有物のフォルダは除く
+    """
+    if layer_of(path) not in MODULE_LAYERS:
+        return set()
+    parts = path.split("/")[:-1]
+    layer_depth = 2 if parts[0] == "src" else 1
+    return {
+        "/".join(parts[: depth + 1])
+        for depth in range(layer_depth, len(parts))
+        if parts[depth] not in TEST_FOLDERS and not KEBAB_CASE.match(parts[depth])
+    }
 
 
 def scan_dependencies(root: Path) -> list[str]:
@@ -467,10 +680,15 @@ def score(root: Path) -> dict:
         密度は `None`
     """
     sources = {path: (root / path).read_text(encoding="utf-8") for path in source_files(root)}
+    by_line = scan_lines(sources)
+    by_layout = scan_layout(sources)
     found = {
         **scan_imports(sources),
-        **scan_lines(sources),
-        **scan_layout(sources),
+        **by_line,
+        **by_layout,
+        **scan_signatures(sources),
+        **scan_documentation(sources),
+        "generic-name": [*by_layout["generic-name"], *by_line["generic-name"]],
         "runtime-dependency": scan_dependencies(root),
     }
     size = measure_size(sources)

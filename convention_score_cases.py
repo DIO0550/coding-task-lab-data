@@ -2,7 +2,8 @@
 """`convention_score.py` の判定表。
 
 一時フォルダへ小さなプロジェクトを置いて採点し、種別ごとの件数が期待どおりかを確かめる。
-期待に書いていない種別は 0 件であることも確かめるので、数えすぎも落ちる。
+期待に書いていない種別は 0 件であることも確かめるので、数えすぎも落ちる。ただし
+`UNCHECKED_UNLESS_EXPECTED` の種別は、期待に書いたケースでだけ件数を確かめる。
 
 `VIOLATION_KINDS` / `INDICATOR_KINDS` のうち、表のどのケースでも 1 件以上を期待していない
 種別があれば、それも落とす（数えなくなる向きの退行は、表に無い種別では気づけないため）。
@@ -21,6 +22,9 @@ from convention_score import INDICATOR_KINDS, VIOLATION_KINDS, score
 
 MONEY = "export type Money = Readonly<{ amount: number }>;\nexport const Money = { create: (amount: number): Money => ({ amount }) };\n"
 
+# doc の無い宣言は、ほかの種別を確かめるための短い置きファイルのほぼすべてに現れる。
+UNCHECKED_UNLESS_EXPECTED = {"undocumented-export"}
+
 # （ケースの名前, 置くファイル, 1 件以上を期待する種別と件数）
 CASES = [
     (
@@ -37,19 +41,20 @@ CASES = [
     (
         "domains から services・features への import は向きの違反",
         {
-            "src/domains/money/index.ts": 'import { total } from "@/src/services/total";\nimport { ScoreView } from "@/src/features/score";\n' + MONEY,
+            "src/domains/money/index.ts": 'import { total } from "@/src/services/total";\nimport type { Total } from "@/src/services/total";\nimport { ScoreView } from "@/src/features/score";\n' + MONEY,
             "src/services/total/index.ts": "export const total = 1;\n",
             "src/features/score/index.ts": "export const ScoreView = 1;\n",
         },
         {"layer-direction": 2},
     ),
     (
-        "utils からドメイン、libs から utils、services から libs への import は向きの違反",
+        "utils からドメイン、services から libs、domains から libs への import は向きの違反。libs は domains と utils を読める",
         {
             "src/utils/ArrayEx.ts": "import { Money } from '../domains/money';\nexport const ArrayEx = { Money };\n",
-            "src/libs/storage/index.ts": 'import { ArrayEx } from "@/src/utils/ArrayEx";\nexport const storage = ArrayEx;\n',
+            "src/libs/storage/index.ts": 'import { ArrayEx } from "@/src/utils/ArrayEx";\nimport { Money } from "@/src/domains/money";\nexport const storage = [ArrayEx, Money];\n',
             "src/services/total/index.ts": 'import { storage } from "@/src/libs/storage";\nexport const total = storage;\n',
             "src/domains/money/index.ts": MONEY,
+            "src/domains/tile/index.ts": 'import { storage } from "@/src/libs/storage";\n' + MONEY,
         },
         {"layer-direction": 3},
     ),
@@ -125,7 +130,7 @@ CASES = [
                 "export const company = 1;\n"
             ),
         },
-        {"any": 1, "class": 1},
+        {"any": 1, "class": 1, "type-assertion": 1},
     ),
     (
         "domains・services の I/O。libs と feature では数えない",
@@ -152,6 +157,13 @@ CASES = [
             "src/features/score/__tests__/score.normal.test.ts": '// @test-rules-disable no-describe\ntest("a", () => {});\n',
         },
         {"suppression": 3},
+    ),
+    (
+        "テストの @ts-expect-error は型が弾くことの確認なので数えない",
+        {
+            "src/features/score/__tests__/score.type.test.ts": '// @ts-expect-error 数値は渡せない\ntest("a", () => {});\n',
+        },
+        {},
     ),
     (
         "テストの describe・名前・置き場所",
@@ -196,6 +208,116 @@ CASES = [
             ),
         },
         {"test-conditional": 1, "test-before-each": 1},
+    ),
+    (
+        "utils はフラットな PascalCase のファイル。テストは __tests__ にまとめてよい",
+        {
+            "src/utils/ArrayEx.ts": "export const ArrayEx = {};\n",
+            "src/utils/__tests__/ArrayEx.normal.test.ts": 'test("a", () => {});\n',
+            "src/utils/array.ts": "export const array = {};\n",
+            "src/utils/string/index.ts": "export const StringEx = {};\n",
+            "src/features/score/utils/label.ts": 'export const label = "点数";\n',
+        },
+        {"utils-form": 2},
+    ),
+    (
+        "モジュールフォルダはケバブケース。同じフォルダは 1 件と数え、__tests__ と app は見ない",
+        {
+            "src/domains/winContext/index.ts": MONEY,
+            "src/domains/winContext/__tests__/money.normal.test.ts": 'test("a", () => {});\n',
+            "src/domains/win-context/index.ts": MONEY,
+            "src/features/score/components/ScoreView/index.tsx": "export const ScoreView = () => <p />;\n",
+            "app/(match)/page.tsx": "export default function Page() { return <p />; }\n",
+        },
+        {"folder-name": 2},
+    ),
+    (
+        "600 行を超える .tsx。空行とコメントは数えず、.ts は見ない",
+        {
+            "src/features/score/components/long-view.tsx": "const a = 1;\n" * 601,
+            "src/features/score/components/short-view.tsx": "const a = 1;\n\n// note\n" * 600,
+            "src/features/score/long.ts": "const a = 1;\n" * 700,
+        },
+        {"long-tsx": 1},
+    ),
+    (
+        "throw と try は libs の外で数える。Context のアクセサフックと Result の unwrap は数えない",
+        {
+            "src/domains/tile/index.ts": 'export const parse = (text: string) => { if (!text) { throw new Error("x"); } return text; };\n',
+            "src/services/total/index.ts": "export const total = (f: () => number) => {\n  try {\n    return f();\n  } catch {\n    return 0;\n  }\n};\n",
+            "src/libs/json/index.ts": "export const parseJson = (text: string) => { try { return JSON.parse(text); } catch { return undefined; } };\n",
+            "src/features/score/hooks/useScore.ts": 'export const useScore = () => { const value = useContext(ScoreContext); if (!value) { throw new Error("Provider"); } return value; };\n',
+            "src/utils/Result.ts": 'export const Result = { unwrap: (ok: boolean) => { if (!ok) { throw new Error("x"); } } };\n',
+            "src/domains/tile/__tests__/tile.edge.test.ts": 'test("a", () => { expect(() => { throw new Error("x"); }).toThrow(); });\n',
+            "src/domains/tile/__tests__/tile-fixture.ts": 'export const must = (ok: boolean) => { if (!ok) { throw new Error("x"); } };\n',
+        },
+        {"exception": 2},
+    ),
+    (
+        "引数が 4 つ以上の関数。分割代入と型引数の中のカンマは数えない",
+        {
+            "src/features/score/index.ts": (
+                "export function four(a: number, b: number, c: number, d: number) { return a + b + c + d; }\n"
+                "export const arrow = (a: number, b: number, c: number, d: number): number => a + b + c + d;\n"
+                "export const Score = {\n"
+                "  method(\n    a: number,\n    b: number,\n    c: number,\n    d: number,\n  ): number {\n    return a + b + c + d;\n  },\n"
+                "  three(a: Map<string, number>, { b, c, d }: Props, e: [number, number]) { return [a, b, c, d, e]; },\n"
+                "};\n"
+                "export const call = () => four(1, 2, 3, 4);\n"
+                "if (four(1, 2, 3, 4)) { call(); }\n"
+            ),
+        },
+        {"param-count": 3},
+    ),
+    (
+        "コンポーネントの戻り値の ReactNode。props の型の ReactNode は数えない",
+        {
+            "src/features/score/components/score-view.tsx": (
+                "export const ScoreView = ({ children }: { children: ReactNode }): ReactNode => <p>{children}</p>;\n"
+                "export const Other = (): ReactElement => <p />;\n"
+            ),
+        },
+        {"react-node-return": 1},
+    ),
+    (
+        "名前の規約。宣言の行だけを数え、使う側は数えない",
+        {
+            "src/domains/tile/index.ts": (
+                "export const MAX_TILES = 136;\n"
+                "export const MaxHand = 14;\n"
+                "export const parseAndValidate = (text: string) => text;\n"
+                "export type TileInfo = Readonly<{ id: string }>;\n"
+                "export const Tile = {\n"
+                "  ofText(text: string) { return text; },\n"
+                "  create(text: string) { return parseAndValidate(text).slice(0, MAX_TILES); },\n"
+                "  sortAndGroup(tiles: readonly string[]) {\n    return tiles;\n  },\n"
+                "};\n"
+                "export const Android = Tile;\n"
+            ),
+            "src/domains/tile/__tests__/helpers.ts": "export const tile = 1;\n",
+        },
+        {"constant-case": 1, "and-name": 2, "generic-name": 2, "of-method": 1},
+    ),
+    (
+        "undefined を返す戻り値の型・switch の default・型の言い換え・doc の無い宣言",
+        {
+            "src/features/score/index.ts": (
+                'import { a as renamed } from "./a";\n'
+                "/** 点数を探す。 */\n"
+                "export const find = (id: string, fallback: number | undefined): number | undefined => fallback;\n"
+                "export const label = (kind: string): string => {\n"
+                "  switch (kind) {\n"
+                '    case "a":\n      return "A";\n'
+                '    default:\n      return "";\n'
+                "  }\n"
+                "};\n"
+                "/** 別名。 */\n"
+                "export const cast = renamed as unknown as number;\n"
+                'export const fixed = ["a"] as const;\n'
+            ),
+            "src/features/score/a.ts": "/** a */\nexport const a = 1;\n",
+        },
+        {"nullable-return": 1, "switch-default": 1, "type-assertion": 1, "undocumented-export": 2},
     ),
     (
         "useEffect とグローバルなリスナー",
@@ -251,6 +373,7 @@ def main() -> int:
             f"{kind}: 期待 {expected.get(kind, 0)} / 実際 {actual[kind]}"
             for kind in all_kinds
             if actual[kind] != expected.get(kind, 0)
+            and (kind in expected or kind not in UNCHECKED_UNLESS_EXPECTED)
         ]
         print(f"{'NG' if mismatches else 'ok'}  {name}")
         for mismatch in mismatches:

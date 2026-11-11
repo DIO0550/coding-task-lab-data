@@ -23,6 +23,7 @@
 
 `convention_score.py` が、採点対象のブランチをチェックアウトしたフォルダを読んで、規約からの外れを種別ごとに数える。
 数える種別と、違反・参考値の分け方はスクリプト冒頭の説明が持つ。
+数えるのは coding-task-lab の版 0.5.0 の規約で、それより前の版の成果物を読ませると、当時は無かった規約でも数える。
 
 ```bash
 python3 convention_score.py <coding-task-lab のチェックアウト>/mahjong          # 人が読む形
