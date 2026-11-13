@@ -19,6 +19,22 @@
 - 規約(architecture / coding / hooks / testing / components)の遵守が変更後も維持されているか
 - 既存の入出力JSON契約が後方互換を保っているか
 
+### 規約の遵守を数える
+
+`convention_score.py` が、採点対象のブランチをチェックアウトしたフォルダを読んで、規約からの外れを種別ごとに数える。
+数える種別と、違反・参考値の分け方はスクリプト冒頭の説明が持つ。
+数えるのは coding-task-lab の版 0.5.0 の規約で、それより前の版の成果物を読ませると、当時は無かった規約でも数える。
+
+```bash
+python3 convention_score.py <coding-task-lab のチェックアウト>/mahjong          # 人が読む形
+python3 convention_score.py <coding-task-lab のチェックアウト>/mahjong --json   # Phase ごとに保存して比べる形
+python3 convention_score_cases.py                                              # スクリプトを直したときの判定表
+```
+
+- 外部パッケージは要らない（`generate_expected.py` と違い、Python 3.10 以上の標準ライブラリだけで動く）
+- lint / typecheck / test / build の成否と、機能の正しさは見ない。別に走らせる
+- 設計の良し悪し（ロジックの帰属先・命名・テストが仕様を捉えているか）は数えられない。そこはレビューで見る
+
 ## 出題順と運用
 
 1. Phase 1 を完了・採点・スナップショット保存
