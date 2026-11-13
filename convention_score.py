@@ -95,6 +95,7 @@ VIOLATION_KINDS = (
     "generic-name",
     "of-method",
     "domain-io",
+    "json-outside-libs",
     "runtime-dependency",
     "suppression",
     "test-describe",
@@ -142,6 +143,7 @@ LINE_PATTERNS = {
         "is_source",
         re.compile(r"^\s*of(?:[A-Z]\w*)?\s*(?:<[^>]*>)?\s*[(:]|\b(?:function|const)\s+of[A-Z]\w*"),
     ),
+    "json-outside-libs": ("is_source_outside_libs", re.compile(r"\bJSON\.(?:parse|stringify)\s*\(")),
     "domain-io": (
         "is_pure_layer",
         re.compile(r"\b(?:console\.\w+|localStorage\b|sessionStorage\b|fetch\s*\(|process\.(?:stdin|stdout|env))"),

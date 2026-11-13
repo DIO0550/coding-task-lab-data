@@ -154,6 +154,17 @@ CASES = [
         {"domain-io": 2},
     ),
     (
+        "JSON の解釈と組み立ては libs の外で数える。テストの共有物とテストは数えない",
+        {
+            "src/cli/calc.ts": 'export const main = (text: string) => JSON.stringify(JSON.parse(text));\n',
+            "src/domains/money/index.ts": "export const toJson = (m: number) => JSON.stringify({ m });\n",
+            "src/libs/json/index.ts": "export const parseJson = (text: string) => JSON.parse(text);\n",
+            "src/services/total/__tests__/fixture.ts": 'export const input = JSON.parse("{}");\n',
+            "src/services/total/__tests__/total.normal.test.ts": 'test("a", () => { expect(JSON.stringify({})).toBe("{}"); });\n',
+        },
+        {"json-outside-libs": 2},
+    ),
+    (
         "許されていないランタイム依存。devDependencies は数えない",
         {
             "package.json": '{"dependencies": {"next": "1", "react": "1", "riichi": "1", "zod": "1"}, "devDependencies": {"vitest": "1"}}',
